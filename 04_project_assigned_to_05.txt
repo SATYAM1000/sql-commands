@@ -1,0 +1,43 @@
+SELECT E.*
+FROM Employee E
+INNER JOIN Assigned_To A ON E.Emp_id = A.Emp_id
+INNER JOIN Project P ON A.Project_id = P.project_id
+WHERE P.proj_name = 'C353';
+
+SELECT E.Emp_id
+FROM Employee E
+INNER JOIN Assigned_To A ON E.Emp_id = A.Emp_id
+INNER JOIN Project P ON A.Project_id = P.project_id
+WHERE P.proj_name = 'C353';
+
+
+SELECT E.*
+FROM Employee E
+INNER JOIN Assigned_To A ON E.Emp_id = A.Emp_id
+INNER JOIN Project P ON A.Project_id = P.project_id
+WHERE P.proj_name = 'Database';
+
+
+SELECT E.*
+FROM Employee E
+WHERE E.Emp_id IN (
+    SELECT A1.Emp_id
+    FROM Assigned_To A1
+    JOIN Project P1 ON A1.Project_id = P1.project_id
+    WHERE P1.proj_name = 'C353'
+    INTERSECT
+    SELECT A2.Emp_id
+    FROM Assigned_To A2
+    JOIN Project P2 ON A2.Project_id = P2.project_id
+    WHERE P2.proj_name = 'C354'
+);
+
+
+SELECT E.Emp_id
+FROM Employee E
+WHERE E.Emp_id NOT IN (
+    SELECT A.Emp_id
+    FROM Assigned_To A
+    JOIN Project P ON A.Project_id = P.project_id
+    WHERE P.proj_name = 'C453'
+);
