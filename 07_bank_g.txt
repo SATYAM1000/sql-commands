@@ -1,0 +1,54 @@
+SELECT bname
+FROM Branch
+WHERE city = 'Bombay';
+
+SELECT actno, amount
+FROM Deposit;
+
+UPDATE Customers
+SET city = 'Mumbai'
+WHERE cname = 'Anil';
+
+SELECT COUNT(DISTINCT cname) AS num_depositors
+FROM Deposit;
+
+SELECT cname, MIN(amount) AS min_amount, MAX(amount) AS max_amount
+FROM Deposit
+GROUP BY cname;
+
+CREATE INDEX AmountIndex ON Deposit(amount);
+
+
+CREATE VIEW BorrowView AS
+SELECT loanno, cname, bname, amount
+FROM Borrow;
+
+//---------------------------------------------------
+
+SELECT adate
+FROM Deposit
+WHERE cname = 'Anil';
+
+ALTER TABLE Deposit
+MODIFY COLUMN amount DECIMAL(12, 2);
+
+
+SELECT cname
+FROM Customers
+WHERE city = 'Pune';
+
+
+SELECT city
+FROM Branch
+WHERE bname = 'KAROLBAGH';
+
+
+SELECT COUNT(*) AS num_tuples
+FROM Customers;
+
+DELETE FROM Customers
+WHERE cname = 'Sunil';
+
+CREATE VIEW DepositView AS
+SELECT actno, cname, bname, amount, adate
+FROM Deposit;

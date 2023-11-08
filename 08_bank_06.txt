@@ -1,0 +1,27 @@
+SELECT c.cname
+FROM Customers c
+JOIN Branch b ON c.city = 'Bombay' AND b.city = 'Nagpur';
+
+SELECT c.cname
+FROM Customers c
+JOIN Branch b ON c.city = b.city;
+
+
+SELECT DISTINCT c.cname
+FROM Customers c
+JOIN Borrow bo ON c.cname = bo.cname
+JOIN Deposit d ON c.cname = d.cname
+WHERE c.city = 'Nagpur';
+
+SELECT DISTINCT bo.cname
+FROM Borrow bo
+JOIN Deposit d ON bo.cname = d.cname
+WHERE d.amount > 1000 AND bo.amount > 2000;
+
+SELECT DISTINCT c.cname
+FROM Customers c
+JOIN Branch b ON c.city = b.city
+WHERE c.cname IN (SELECT d.cname FROM Deposit d WHERE d.cname = 'Sunil');
+
+
+CREATE INDEX AmountIndex ON Deposit(amount);

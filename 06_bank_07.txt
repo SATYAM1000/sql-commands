@@ -1,0 +1,27 @@
+SELECT DISTINCT cname
+FROM Deposit
+WHERE amount > 4000;
+
+
+SELECT adate
+FROM Deposit
+WHERE cname = 'Anil';
+
+SELECT actno, amount
+FROM Deposit
+WHERE adate BETWEEN '1996-12-01' AND '1997-05-01';
+
+SELECT AVG(amount) AS avg_balance
+FROM Deposit
+WHERE bname = 'Perryridge';
+
+SELECT bname
+FROM Branch
+WHERE bname IN (SELECT bname FROM Deposit GROUP BY bname HAVING AVG(amount) > 1200);
+
+DELETE FROM Deposit
+WHERE amount < 5000;
+
+CREATE VIEW DepositView AS
+SELECT actno, cname, bname, amount, adate
+FROM Deposit;
