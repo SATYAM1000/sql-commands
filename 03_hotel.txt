@@ -1,0 +1,240 @@
+SELECT *
+FROM Hotel;
+
+
+SELECT COUNT(*) AS num_hotels
+FROM Hotel;
+
+
+SELECT Room.Price, Room.Type
+FROM Room
+WHERE Room.HotelNo = (SELECT HotelNo FROM Hotel WHERE Name = 'Grosvenor Hotel');
+
+
+SELECT Hotel.Name, COUNT(Room.RoomNo) AS num_rooms
+FROM Hotel
+LEFT JOIN Room ON Hotel.HotelNo = Room.HotelNo
+GROUP BY Hotel.Name;
+
+
+UPDATE Room
+SET Price = Price * 1.05;
+
+
+SELECT *
+FROM Hotel
+WHERE City = 'London';
+
+
+SELECT AVG(Price) AS average_price
+FROM Room;
+
+
+SELECT Guest.*
+FROM Guest
+INNER JOIN Booking ON Guest.GuestNo = Booking.GuestNo
+WHERE Booking.HotelNo = (SELECT HotelNo FROM Hotel WHERE Name = 'Grosvenor Hotel')
+  AND Booking.DateFrom <= CURDATE() AND Booking.DateTo >= CURDATE();
+
+
+SELECT Hotel.Name, COUNT(Room.RoomNo) AS num_rooms
+FROM Hotel
+LEFT JOIN Room ON Hotel.HotelNo = Room.HotelNo
+WHERE Hotel.City = 'London'
+GROUP BY Hotel.Name;
+
+
+CREATE VIEW LondonHotels AS
+SELECT *
+FROM Hotel
+WHERE City = 'London';
+
+
+SELECT *
+FROM LondonHotels;
+
+//--------------------------------------------------
+
+//total-revenue-per-night----------------------
+
+SELECT SUM(Room.Price) AS total_revenue
+FROM Room
+WHERE Room.Type = 'double';
+
+SELECT Room.*, Guest.GuestName
+FROM Room
+LEFT JOIN Booking ON Room.HotelNo = Booking.HotelNo AND Room.RoomNo = Booking.RoomNo
+LEFT JOIN Guest ON Booking.GuestNo = Guest.GuestNo
+WHERE Room.HotelNo = (SELECT HotelNo FROM Hotel WHERE Name = 'Grosvenor Hotel');
+
+SELECT Hotel.Name, AVG(BookingCount) AS avg_bookings
+FROM Hotel
+LEFT JOIN (SELECT HotelNo, COUNT(*) AS BookingCount
+           FROM Booking
+           WHERE MONTH(DateFrom) = 4
+           GROUP BY HotelNo) AprilBookings
+ON Hotel.HotelNo = AprilBookings.HotelNo
+GROUP BY Hotel.Name;
+
+
+CREATE INDEX RoomTypeIndex ON Room(Type);
+
+
+SELECT *
+FROM Room
+WHERE Type = 'double';
+
+
+SELECT *
+FROM Hotel;
+
+SELECT *
+FROM Hotel
+WHERE City = 'London';
+
+
+UPDATE Room
+SET Price = Price * 1.05;
+
+
+SELECT Hotel.Name, COUNT(Room.RoomNo) AS num_rooms
+FROM Hotel
+LEFT JOIN Room ON Hotel.HotelNo = Room.HotelNo
+WHERE Hotel.City = 'London'
+GROUP BY Hotel.Name;
+
+
+SELECT *
+FROM Room
+WHERE (Type = 'double' OR Type = 'family') AND Price < 40.00
+ORDER BY Price;
+
+//-------------------------------------------------
+
+//
+
+SELECT *
+FROM Hotel;
+
+
+SELECT COUNT(*) AS num_hotels
+FROM Hotel;
+
+SELECT Type, Price
+FROM Room
+WHERE HotelNo = (SELECT HotelNo FROM Hotel WHERE Name = 'Grosvenor Hotel');
+
+SELECT Hotel.Name, COUNT(Room.RoomNo) AS num_rooms
+FROM Hotel
+LEFT JOIN Room ON Hotel.HotelNo = Room.HotelNo
+GROUP BY Hotel.Name;
+
+
+SELECT Guest.*
+FROM Guest
+INNER JOIN Booking ON Guest.GuestNo = Booking.GuestNo
+WHERE Booking.HotelNo = (SELECT HotelNo FROM Hotel WHERE Name = 'Grosvenor Hotel')
+  AND CURDATE() BETWEEN Booking.DateFrom AND Booking.DateTo;
+
+
+SELECT Room.*
+FROM Room
+WHERE (Type = 'double' OR Type = 'family') AND Price < 40.00
+ORDER BY Price;
+
+
+SELECT COUNT(DISTINCT GuestNo) AS num_guests
+FROM Booking
+WHERE MONTH(DateFrom) = 8;
+
+
+SELECT SUM(Room.Price) AS total_income
+FROM Room
+INNER JOIN Booking ON Room.RoomNo = Booking.RoomNo AND Room.HotelNo = Booking.HotelNo
+WHERE Room.HotelNo = (SELECT HotelNo FROM Hotel WHERE Name = 'Grosvenor Hotel')
+  AND CURDATE() BETWEEN Booking.DateFrom AND Booking.DateTo;
+
+
+SELECT Hotel.Name, Room.Type AS most_common_room_type
+FROM Hotel
+LEFT JOIN Room ON Hotel.HotelNo = Room.HotelNo
+WHERE Hotel.City = 'London'
+GROUP BY Hotel.Name
+HAVING Room.Type = (
+  SELECT Room.Type
+  FROM Room
+  WHERE HotelNo = Hotel.HotelNo
+  GROUP BY Room.Type
+  ORDER BY COUNT(*) DESC
+  LIMIT 1
+);
+
+
+UPDATE Room
+SET Price = Price * 1.05;
+
+
+//-----------------------------------------------
+
+SELECT *
+FROM Hotel;
+
+
+SELECT *
+FROM Hotel
+WHERE City = 'London';
+
+
+SELECT G.*
+FROM Guest G
+INNER JOIN Booking B ON G.GuestNo = B.GuestNo
+WHERE B.HotelNo = (SELECT HotelNo FROM Hotel WHERE Name = 'Grosvenor Hotel')
+  AND B.DateFrom <= CURDATE() AND B.DateTo >= CURDATE();
+
+
+SELECT GuestName, GuestAddress
+FROM Guest
+WHERE GuestNo IN (
+  SELECT B.GuestNo
+  FROM Booking B
+  JOIN Hotel H ON B.HotelNo = H.HotelNo
+  WHERE H.City = 'London'
+)
+ORDER BY GuestName;
+
+
+SELECT *
+FROM Booking
+WHERE DateTo IS NULL;
+
+
+SELECT COUNT(*) AS num_hotels
+FROM Hotel;
+
+
+SELECT R.*
+FROM Room R
+LEFT JOIN Booking B ON R.HotelNo = B.HotelNo AND R.RoomNo = B.RoomNo
+WHERE R.HotelNo = (SELECT HotelNo FROM Hotel WHERE Name = 'Grosvenor Hotel')
+  AND (B.DateFrom > CURDATE() OR B.DateTo < CURDATE() OR B.DateTo IS NULL);
+
+
+SELECT H.Name AS HotelName, SUM(R.Price) AS lost_income
+FROM Hotel H
+LEFT JOIN Room R ON H.HotelNo = R.HotelNo
+LEFT JOIN Booking B ON R.HotelNo = B.HotelNo AND R.RoomNo = B.RoomNo
+WHERE (B.DateFrom > CURDATE() OR B.DateTo < CURDATE() OR B.DateTo IS NULL)
+GROUP BY H.Name;
+
+
+CREATE INDEX RoomTypeIndex ON Room(Type);
+
+CREATE VIEW GuestBookings AS
+SELECT G.GuestName, G.GuestAddress, H.Name AS HotelName, B.DateFrom, B.DateTo, R.Type
+FROM Guest G
+JOIN Booking B ON G.GuestNo = B.GuestNo
+JOIN Hotel H ON B.HotelNo = H.HotelNo
+JOIN Room R ON B.RoomNo = R.RoomNo;
+
+SELECT *
+FROM GuestBookings;
