@@ -1,0 +1,47 @@
+SELECT employee_name
+FROM works
+WHERE company_name = 'First Bank Corporation';
+
+SELECT DISTINCT employee_name
+FROM employee
+WHERE employee_name NOT IN (SELECT employee_name FROM works WHERE company_name = 'First Bank Corporation');
+
+SELECT company_name
+FROM works
+GROUP BY company_name
+HAVING COUNT(employee_name) = (SELECT MAX(emp_count) FROM (SELECT company_name, COUNT(employee_name) AS emp_count FROM works GROUP BY company_name) AS company_counts);
+
+
+SELECT DISTINCT company_name
+FROM company
+WHERE city IN (SELECT city FROM company WHERE company_name = 'Small Bank Corporation')
+AND company_name NOT IN (SELECT company_name FROM company WHERE city NOT IN (SELECT city FROM company WHERE company_name = 'Small Bank Corporation'));
+
+
+SELECT e.*
+FROM employee e
+JOIN works w ON e.employee_name = w.employee_name
+WHERE w.salary > 10000;
+
+
+UPDATE works
+SET salary = salary * 1.10
+WHERE company_name = 'First Bank Corporation';
+
+
+SELECT e.employee_name AS employee, m.employee_name AS manager
+FROM employee e
+LEFT JOIN manages m ON e.employee_name = m.employee_name;
+
+
+SELECT e.employee_name, e.street, e.city
+FROM employee e
+JOIN works w ON e.employee_name = w.employee_name
+WHERE w.company_name = 'First Bank Corporation' AND w.salary > 10000;
+
+
+SELECT c.company_name
+FROM company c
+JOIN works w ON c.company_name = w.company_name
+GROUP BY c.company_name
+HAVING AVG(w.salary) > (SELECT AVG(salary) FROM works WHERE company_name = 'First Bank Corporation');
