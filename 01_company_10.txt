@@ -1,0 +1,51 @@
+SELECT MAX(salary)
+FROM Emp
+WHERE job = 'salesman';
+
+
+SELECT ename
+FROM Emp
+WHERE ename LIKE 'I%';
+
+
+SELECT *
+FROM Emp
+WHERE hiredate < '1981-09-30';
+
+
+SELECT *
+FROM Emp
+ORDER BY salary DESC;
+
+
+SELECT deptno, COUNT(eno) AS num_of_employees, AVG(salary) AS avg_salary
+FROM Emp
+WHERE deptno = 20
+GROUP BY deptno;
+
+
+SELECT hiredate, AVG(salary) AS avg_salary, MIN(salary) AS min_salary
+FROM Emp
+WHERE deptno = 10
+GROUP BY hiredate;
+
+
+SELECT E.ename, D.deptname
+FROM Emp E
+JOIN Dept D ON E.deptno = D.deptno;
+
+
+SELECT D.deptname, SUM(E.salary) AS total_salary
+FROM Emp E
+JOIN Dept D ON E.deptno = D.deptno
+GROUP BY D.deptname;
+
+
+SELECT *
+FROM Emp
+WHERE deptno = (SELECT deptno FROM Dept WHERE deptname = 'Dev');
+
+
+UPDATE Emp
+SET salary = salary * 1.05
+WHERE deptno = 10;
