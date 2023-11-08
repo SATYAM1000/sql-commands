@@ -1,0 +1,63 @@
+SELECT *
+FROM Duty_allocation
+WHERE emp_no = 123461
+  AND EXTRACT(YEAR_MONTH FROM day) = '198604';
+
+
+SELECT day, shift
+FROM Duty_allocation
+WHERE emp_no = (SELECT emp_no FROM Employee WHERE name = 'xyz');
+
+
+SELECT E.*
+FROM Employee E
+WHERE E.pay_rate >= (SELECT pay_rate FROM Employee WHERE name = 'xyz');
+
+SELECT name, pay_rate
+FROM Employee
+WHERE emp_no < 123460
+  AND pay_rate > (SELECT MAX(pay_rate) FROM Employee WHERE emp_no >= 123460);
+
+
+SELECT E.name
+FROM Employee E
+WHERE NOT EXISTS (
+  SELECT P.skill
+  FROM Position P
+  WHERE P.skill = 'Chef'
+  AND NOT EXISTS (
+    SELECT D.emp_no
+    FROM Duty_allocation D
+    WHERE D.emp_no = E.emp_no
+    AND D.posting_no = P.posting_no
+  )
+);
+
+SELECT name
+FROM Employee
+WHERE pay_rate = (SELECT MIN(pay_rate) FROM Employee);
+
+
+SELECT emp_no
+FROM Duty_allocation
+GROUP BY emp_no
+HAVING COUNT(DISTINCT day) >= 2;
+
+
+SELECT E.name
+FROM Employee E
+WHERE EXISTS (
+  SELECT 1
+  FROM Duty_allocation D
+  JOIN Position P ON D.posting_no = P.posting_no
+  WHERE D.emp_no = E.emp_no
+  AND P.skill = 'Chef'
+);
+
+SELECT name
+FROM Employee
+WHERE emp_no NOT IN (SELECT emp_no FROM Duty_allocation);
+
+SELECT shift, COUNT(DISTINCT emp_no) AS employee_count
+FROM Duty_allocation
+GROUP BY shift;
