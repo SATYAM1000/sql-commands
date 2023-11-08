@@ -1,0 +1,32 @@
+db.Teachers.find({});
+
+db.Teachers.find({ dname: "Computer" });
+
+db.Teachers.find({ dname: { $in: ["Computer", "IT", "E&TC"] } });
+
+db.Teachers.find({ dname: { $in: ["Computer", "IT", "E&TC"] }, salary: { $gte: 10000 } });
+
+db.Students.find({ $or: [{ roll_no: 2 }, { Sname: "xyz" }] });
+
+db.Teachers.updateOne(
+    { Tname: "Praveen" },
+    { $set: { experience: 10 } },
+    { upsert: true }
+);
+
+
+db.Teachers.updateMany(
+    { dname: "IT" },
+    { $set: { dname: "COMP" } }
+);
+
+db.Teachers.find({}, { Tname: 1, experience: 1, _id: 0 });
+
+db.Department.save({ dept_name: "DepartmentName" });
+
+db.Teachers.save({ Tname: "Rajesh", dname: "IT" });
+
+
+db.Teachers.deleteMany({ dname: "IT" });
+
+db.Teachers.find().sort({ _id: 1 }).limit(3).pretty();

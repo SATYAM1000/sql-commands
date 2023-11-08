@@ -1,0 +1,43 @@
+db.createCollection("games")
+
+db.games.insertMany([
+  {
+    name: "The Witcher 3",
+    gametype: "RPG",
+    rating: 95
+  },
+  {
+    name: "The Legend of Zelda: Breath of the Wild",
+    gametype: "Adventure",
+    rating: 97
+  },
+  {
+    name: "Red Dead Redemption 2",
+    gametype: "Action-Adventure",
+    rating: 98
+  },
+  {
+    name: "Dark Souls III",
+    gametype: "Action RPG",
+    rating: 92
+  },
+  {
+    name: "Rocket League",
+    gametype: "Sports",
+    rating: 86
+  }
+])
+
+
+db.games.find({})
+
+db.games.find().sort({ rating: -1 }).limit(3)
+
+db.games.updateMany(
+  { name: { $in: ["The Witcher 3", "Red Dead Redemption 2"] } },
+  { $set: { achievements: ["Game Master", "Speed Demon"] } }
+)
+
+db.games.find({ achievements: { $all: ["Game Master", "Speed Demon"] } })
+
+db.games.find({ achievements: { $exists: true, $ne: [] } })

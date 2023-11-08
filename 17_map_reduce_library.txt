@@ -1,0 +1,20 @@
+// Define the map function to categorize books as small or big.
+var mapFunction = function() {
+  if (this.pages < 250) {
+    emit('Small Book', 1);
+  } else {
+    emit('Big Book', 1);
+  }
+};
+
+// Define the reduce function to count the number of books in each category.
+var reduceFunction = function(key, values) {
+  return Array.sum(values);
+};
+
+// Run the MapReduce operation and store the result in a new collection.
+db.books.mapReduce(mapFunction, reduceFunction, {
+  out: 'book_category_count'
+})
+
+// Query the 'book_category_count' collection to find the count of small and big books.

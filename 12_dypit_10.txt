@@ -1,0 +1,34 @@
+db.Teachers.find({});
+db.Teachers.aggregate([
+    { $match: { dname: "Computer" } },
+    { $group: { _id: null, avgSalary: { $avg: "$salary" } } }
+]);
+
+db.Teachers.aggregate([
+    { $match: { dname: "E&TC" } },
+    { $group: { _id: null, minSalary: { $min: "$salary" }, maxSalary: { $max: "$salary" } } }
+]);
+
+db.Teachers.find({
+    dname: { $in: ["Computer", "IT", "E&TC"] },
+    salary: { $gte: 10000 }
+});
+
+db.Students.find({ $or: [{ roll_no: 2 }, { Sname: "xyz" }] });
+
+db.Teachers.updateOne(
+    { Tname: "Praveen" },
+    { $set: { experience: 10 } },
+    { upsert: true }
+);
+
+db.Teachers.updateMany(
+    { dname: "IT" },
+    { $set: { dname: "COMP" } }
+);
+
+db.Teachers.find({}, { Tname: 1, experience: 1, _id: 0 });
+
+db.Department.save({ dept_name: "DepartmentName" });
+
+db.Teachers.aggregate([{ $group: { _id: null, totalSalary: { $sum: "$salary" } } }]);

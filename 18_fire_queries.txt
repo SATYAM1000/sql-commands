@@ -1,0 +1,6 @@
+db.zips.createIndex({ population: 1 })
+db.zips.createIndex({ state: 1, city: 1 })
+db.zips.createIndex({ hobbies: 1 })
+db.zips.find({ population: { $gt: 1600 } })
+db.zips.find({ state: "KS" })
+db.zips.find({ city: "TIMKEN" }, { _id: 0, loc: 1 })

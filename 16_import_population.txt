@@ -1,0 +1,17 @@
+// Define the map function to emit state and population.
+var mapFunction = function() {
+  emit(this.state, this.pop);
+};
+
+// Define the reduce function to sum up the populations for each state.
+var reduceFunction = function(key, values) {
+  return Array.sum(values);
+};
+
+// Run the MapReduce operation and store the result in a new collection.
+db.zips.mapReduce(mapFunction, reduceFunction, {
+  out: "state_population"
+});
+
+// Query the result to find the total population in each state.
+db.state_population.find().sort({ _id: 1 });

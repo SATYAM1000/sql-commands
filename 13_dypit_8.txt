@@ -1,0 +1,29 @@
+db.Teachers.aggregate([
+    { $group: { _id: "$dname", avgSalary: { $avg: "$salary" } } }
+])
+
+db.Teachers.aggregate([
+    { $group: { _id: "$dname", count: { $sum: 1 } } }
+])
+
+db.Teachers.aggregate([
+    { $group: { _id: "$dname", totalSalary: { $sum: "$salary" } } },
+    { $match: { totalSalary: { $gte: 50000 } } }
+])
+
+db.Teachers.createIndex({ Tname: 1 }, { unique: true })
+
+db.Teachers.createIndex({ dname: 1, experience: 1 })
+
+db.getCollectionNames().forEach(function (collectionName) {
+    var indexes = db.getCollection(collectionName).getIndexes();
+    print("Indexes for collection " + collectionName + ": ");
+    printjson(indexes);
+})
+
+var teachersIndexes = db.Teachers.getIndexes();
+var studentsIndexes = db.Students.getIndexes();
+print("Indexes for Teachers collection: ");
+printjson(teachersIndexes);
+print("Indexes for Students collection: ");
+printjson(studentsIndexes);

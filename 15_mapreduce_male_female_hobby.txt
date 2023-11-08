@@ -1,0 +1,30 @@
+var mapFunction = function() {
+  emit(this.gender, 1);
+};
+
+var reduceFunction = function(key, values) {
+  return Array.sum(values);
+};
+
+db.users.mapReduce(mapFunction, reduceFunction, {
+  out: "gender_count"
+});
+
+db.gender_count.find();
+
+var mapFunction = function() {
+  var hobbies = this.hobbies.split(",");
+  hobbies.forEach(function(hobby) {
+    emit(hobby, 1);
+  });
+};
+
+var reduceFunction = function(key, values) {
+  return Array.sum(values);
+};
+
+db.users.mapReduce(mapFunction, reduceFunction, {
+  out: "hobby_count"
+});
+
+db.hobby_count.find();
