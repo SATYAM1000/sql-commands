@@ -1,0 +1,78 @@
+DECLARE
+  v_bal_due NUMBER;
+  -- Define a user-defined exception
+  balance_due_exception EXCEPTION;
+  PRAGMA EXCEPTION_INIT(balance_due_exception, -20001);
+BEGIN
+  -- Get the value of bal_due for the specific client
+  SELECT bal_due INTO v_bal_due
+  FROM client_master
+  WHERE client_id = &Enter_Client_ID;
+
+  -- Check the business rule: bal_due should not be less than 0
+  IF v_bal_due < 0 THEN
+    RAISE_APPLICATION_ERROR(-20001, 'Balance due is less than 0');
+  ELSE
+    -- Your business logic goes here
+    -- Perform the required actions
+    DBMS_OUTPUT.PUT_LINE('Business rule not violated');
+  END IF;
+EXCEPTION
+  WHEN balance_due_exception THEN
+    DBMS_OUTPUT.PUT_LINE('Business rule violated: ' || SQLERRM);
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('Client not found');
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/
+
+
+DECLARE
+  v_roll_no NUMBER := &Enter_Roll_No;
+  v_book_name VARCHAR2(100) := '&Enter_Book_Name';
+  v_date_of_issue DATE; -- Assuming you have the date of issue
+  v_current_date DATE := SYSDATE;
+  v_fine_amt NUMBER;
+  v_status CHAR(1) := 'R'; -- Default status is "Returned"
+
+  -- Define a user-defined exception
+  fine_exception EXCEPTION;
+  PRAGMA EXCEPTION_INIT(fine_exception, -20002);
+BEGIN
+  -- Calculate the number of days from the date of issue
+  v_date_of_issue := TO_DATE('2023-10-01', 'YYYY-MM-DD'); -- Replace with actual date
+
+  DECLARE
+    v_days_passed NUMBER;
+  BEGIN
+    SELECT (v_current_date - v_date_of_issue) INTO v_days_passed FROM DUAL;
+    -- Calculate fine based on the number of days
+    IF v_days_passed <= 15 THEN
+      v_fine_amt := v_days_passed * 5;
+    ELSIF v_days_passed <= 30 THEN
+      v_fine_amt := v_days_passed * 50;
+    ELSE
+      RAISE fine_exception;
+    END IF;
+
+    -- Update the status to "Returned" in the Borrow table
+    UPDATE Borrow
+    SET Status = v_status
+    WHERE Roll_no = v_roll_no AND NameofBook = v_book_name;
+
+    -- Store fine details in the Fine table
+    INSERT INTO Fine (Roll_no, Date, Amt)
+    VALUES (v_roll_no, v_current_date, v_fine_amt);
+
+    DBMS_OUTPUT.PUT_LINE('Fine calculated and updated. Fine Amount: ' || v_fine_amt);
+  EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+      DBMS_OUTPUT.PUT_LINE('Book not found in the Borrow table');
+    WHEN fine_exception THEN
+      DBMS_OUTPUT.PUT_LINE('Fine exceeds the limit. Book not returned.');
+    WHEN OTHERS THEN
+      DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+  END;
+END;
+/
